@@ -1,56 +1,65 @@
 import numpy as np
-import light_new
+import light
 from matplotlib import cm
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import os
 
-norm = np.linalg.norm
-
-
-def getStrength(iLight, distance):
-    return iLight.strength / (distance / 1.0) ** 2
-
-
-lights = light_new.lights
-field = light_new.field
-
-
-def getLightStrength(iLight, point):
-    start = np.array(iLight.start)
-    l1 = point - start
-    distance = iLight.distance * np.array(iLight.direction)
-    if norm(distance) == 0:
-        d = norm(l1)
-        if d < 10:
-            return iLight.strength
-        else:
-            return 0
-    else:
-        d = abs(float(np.cross(l1, distance)) / iLight.distance)
-        l = np.dot(l1, distance) / iLight.distance
-        if d < 10 and l > 0:
-            return getStrength(iLight, l)
-        else:
-            return 0
-
-
+lights = light.lights
+field = light.field
 x = range(len(field))
 y = range(len(field[0]))
-value = np.zeros((len(field), len(field[0])))
-for i in x:
-    print(i)
-    for j in y:
-        if field[i][j] != 0:
-            value[i][j] = 0
+if os.path.exists('values1.npy'):
+    value = np.load('values1.npy')
+else:
+    norm = np.linalg.norm
+
+
+    def getStrength(iLight, distance):
+        return iLight.strength / (distance / 1.0) ** 2
+
+
+
+
+
+    def getLightStrength(iLight, point):
+        start = np.array(iLight.start)
+        l1 = point - start
+        distance = iLight.distance * np.array(iLight.direction)
+        if norm(distance) == 0:
+            d = norm(l1)
+            if d < 10:
+                return iLight.strength
+            else:
+                return 0
         else:
-            for light in lights:
-                value[i][j] = value[i][j] + getLightStrength(light, np.array([i, j]))
-            if value[i][j] < 1:
+            d = abs(float(np.cross(l1, distance)) / iLight.distance)
+            l = np.dot(l1, distance) / iLight.distance
+            if d < 10 and l > 0:
+                return getStrength(iLight, l)
+            else:
+                return 0
+
+
+
+    value = np.zeros((len(field), len(field[0])))
+    for i in x:
+        print(i)
+        for j in y:
+            if field[i][j] != 0:
                 value[i][j] = 0
             else:
-                value[i][j] = np.log(value[i][j])
+                for light in lights:
+                    value[i][j] = value[i][j] + getLightStrength(light, np.array([i, j]))
+                if value[i][j] < 1:
+                    value[i][j] = 0
+                else:
+                    value[i][j] = np.log(value[i][j])
 
-np.save('values1.npy',value)
+    np.save('values1.npy',value)
+
+
+
 X, Y = np.meshgrid(y, x)
 fig = plt.figure()
 ax = fig.add_subplot(111,projection='3d')

@@ -7,7 +7,7 @@ root = [740, 610]
 myfWall = wall.Wall('./room.jpg')
 field = myfWall.getValue()
 lights = []
-setstep = 5
+setstep = 1
 N = 400
 
 

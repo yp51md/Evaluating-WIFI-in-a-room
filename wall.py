@@ -7,9 +7,6 @@ class Wall:
     def __init__(self, path):
         self.path = path
 
-
-
-
     def getValue(self):
         img = Image.open(self.path)
         imgConverted = img.convert('L')

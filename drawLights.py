@@ -38,7 +38,7 @@ def getColor(x):
 
 
 step = 2
-turtle.screensize(1800, 1600,)
+turtle.screensize(1800, 1600, )
 turtle.tracer(0)
 ninja = turtle.Turtle()
 ninja.speed(20000)
